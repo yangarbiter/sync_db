@@ -11,6 +11,7 @@ source "$ROOT_DIR/obsidian_sync_common.sh"
 
 current_branch="$(git -C "$ROOT_DIR" rev-parse --abbrev-ref HEAD)"
 current_commit="$(git -C "$ROOT_DIR" rev-parse --short=7 HEAD)"
+current_hostname="$(hostname 2>/dev/null || printf '%s' '-')"
 
 _obsidian_sync_write_row "bash" "0" "$ROOT_DIR" "echo hello | cat"
 
@@ -19,10 +20,11 @@ log_file="$OBSIDIAN_VAULT/logs/$(date '+%Y-%m-%d').md"
 
 grep -q "# Command Log" "$log_file"
 grep -q "Time (Local)" "$log_file"
+grep -q "Hostname" "$log_file"
 grep -q "Git Branch" "$log_file"
 grep -q "Git Commit" "$log_file"
 grep -q "echo hello \\| cat" "$log_file"
-grep -q "| bash | 0 |" "$log_file"
+grep -q "| $current_hostname | bash | 0 |" "$log_file"
 grep -q "| $current_branch | $current_commit |" "$log_file"
 
 echo "tests passed"

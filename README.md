@@ -9,7 +9,7 @@ These wrappers append every interactive shell command you run to a daily Markdow
 - Bash via `PROMPT_COMMAND`
 - Zsh via `preexec` + `precmd` hooks
 
-Each entry includes UTC timestamp, local command time, shell, exit code, git branch/commit (when in a git repo), working directory, and command.
+Each entry includes UTC timestamp, local command time, hostname, shell, exit code, git branch/commit (when in a git repo), working directory, and command.
 
 ## 1) Set up your Obsidian vault
 
