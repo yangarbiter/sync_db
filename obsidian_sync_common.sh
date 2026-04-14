@@ -29,8 +29,8 @@ _obsidian_sync_ensure_header() {
 
   {
     printf '# Command Log %s\n\n' "$(date '+%Y-%m-%d')"
-    printf '| Timestamp (UTC) | Time (Local) | Shell | Exit | Git Branch | Git Commit | Dir | Command |\n'
-    printf '|---|---|---|---:|---|---|---|---|\n'
+    printf '| Timestamp (UTC) | Time (Local) | Hostname | Shell | Exit | Git Branch | Git Commit | Dir | Command |\n'
+    printf '|---|---|---|---|---:|---|---|---|---|\n'
   } >"$file"
 }
 
@@ -62,7 +62,7 @@ _obsidian_sync_git_info() {
 }
 
 _obsidian_sync_write_row() {
-  local shell_name exit_code dir cmd ts_utc ts_local file git_info git_branch git_commit
+  local shell_name exit_code dir cmd ts_utc ts_local file git_info git_branch git_commit hostname
   shell_name="$1"
   exit_code="$2"
   dir="$3"
@@ -75,16 +75,19 @@ _obsidian_sync_write_row() {
 
   ts_utc="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   ts_local="$(date '+%H:%M:%S')"
+  hostname="$(hostname 2>/dev/null || printf '%s' '-')"
+  [ -z "$hostname" ] && hostname="-"
 
   git_info="$(_obsidian_sync_git_info "$dir")"
   git_branch="${git_info%%|*}"
   git_commit="${git_info#*|}"
 
+  hostname="$(_obsidian_sync_escape_pipes "$hostname")"
   dir="$(_obsidian_sync_escape_pipes "$dir")"
   cmd="$(_obsidian_sync_escape_pipes "$cmd")"
   git_branch="$(_obsidian_sync_escape_pipes "$git_branch")"
   git_commit="$(_obsidian_sync_escape_pipes "$git_commit")"
 
-  printf '| %s | %s | %s | %s | %s | %s | `%s` | `%s` |\n' \
-    "$ts_utc" "$ts_local" "$shell_name" "$exit_code" "$git_branch" "$git_commit" "$dir" "$cmd" >>"$file"
+  printf '| %s | %s | %s | %s | %s | %s | %s | `%s` | `%s` |\n' \
+    "$ts_utc" "$ts_local" "$hostname" "$shell_name" "$exit_code" "$git_branch" "$git_commit" "$dir" "$cmd" >>"$file"
 }
